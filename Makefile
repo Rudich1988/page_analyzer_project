@@ -4,6 +4,12 @@ install:
 dev:
 	poetry run flask --app page_analyzer:app run
 
+publish:
+	poetry publish --dry-run
+
+package-install:
+	python3 -m pip install --user dist/*.whl
+
 test:
 	poetry run pytest
 
