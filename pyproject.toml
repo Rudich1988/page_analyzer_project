@@ -9,12 +9,11 @@ packages = [{include = "page_analyzer"}, {include = "hexlet-code"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 flask = "^3.0.0"
-
+pytest-cov = "^4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
 pytest = "^7.4.3"
-pytest-cov = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core"]
