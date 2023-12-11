@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 import validators
 import psycopg2
 import os
@@ -73,6 +73,24 @@ def get_url_data(id):
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM urls WHERE id = {id}")
     result = cur.fetchall()
+    print(result[0][2])
+    cur.execute(f"SELECT id, created_at FROM url_checks WHERE url_id={id} ORDER BY id DESC;")
+    checks_website_data = cur.fetchall()
+    print(checks_website_data)
     cur.close()
     conn.close()
-    return render_template('/get_url_data.html', url=result)
+    return render_template('/get_url_data.html',
+                           url=result, check_data=checks_website_data)
+
+
+@app.route('/urls/<id>/checks', methods=['POST'])
+def check_url(id):
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    create_date = date.today()
+    cur.execute("INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)", (id, create_date))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Страница успешно проверена', 'success')
+    return redirect(url_for('get_url_data', id=id))

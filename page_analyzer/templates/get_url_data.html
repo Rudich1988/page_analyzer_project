@@ -14,7 +14,7 @@
     {% endif %}
   {% endfor %}
   <div class="container-lg mt-3">
-    <h1>{{ url[0][1] }}</h1>
+    <h1>Сайт: {{ url[0][1] }}</h1>
     <div class="table-responsive">
       <table class="table table-bordered table-hover text-nowrap" data-test="url">
         <tbody>
@@ -34,8 +34,8 @@
       </table>
     </div>
 
-    <!--<h2 class="mt-5 mb-3">Проверки</h2>
-    <form method="post" action="/urls/1/checks">
+    <h2 class="mt-5 mb-3">Проверки</h2>
+    <form method="post" action="{{ url_for('check_url', id=url[0][0]) }}">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
     </form>
     
@@ -51,12 +51,19 @@
         <th>Дата создания</th>
       </tr>
     </thead>
-      <tbody>
-    
-    </tbody>
+    {% if check_data %}
+      {% for data in check_data %}
+        <tbody>
+          <td>{{ data[0] }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{ data[1] }}</td>
+        </tbody>
+      {% endfor %}
+    {% endif %}
     </table>
-  </div>-->
-
   </div>
 </main>
 {% endblock %}
