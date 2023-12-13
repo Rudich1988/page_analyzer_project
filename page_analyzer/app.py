@@ -4,6 +4,7 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 from datetime import date
+import requests
 
 from page_analyzer.correct_url import normalize_url
 
@@ -39,28 +40,32 @@ def add_website():
                 cur.execute("INSERT INTO urls (name, created_at) VALUES (%s, %s)",
                             (website_url, create_date))
                 conn.commit()
-                cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
+                #cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
+                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
+                print(result)
                 cur.close()
                 conn.close()
                 flash('Страница успешно добавлена', 'success')
-                return render_template('/get_url_data.html', url=result)
+                return render_template('/get_url_data.html', check_data=result)
             except Exception:
                 conn = psycopg2.connect(DATABASE_URL)
                 cur = conn.cursor()
-                cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
+                #cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
+                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
+                print(result)
                 cur.close()
                 conn.close()
-                flash('Страница уже существует', 'error')
-                return render_template('/get_url_data.html', url=result)
+                flash('Страница уже существует', 'not success')
+                return render_template('/get_url_data.html', check_data=result)
 
 
 @app.route('/urls')
 def show_urls():
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    cur.execute("SELECT * FROM urls ORDER BY id DESC;")
+    cur.execute("SELECT urls.id, urls.name, url_checks.status_code, MAX(url_checks.created_at) FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id GROUP BY urls.id, url_checks.status_code ORDER BY urls.id DESC;")
     result = cur.fetchall()
     cur.close()
     conn.close()
@@ -71,26 +76,31 @@ def show_urls():
 def get_url_data(id):
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM urls WHERE id = {id}")
-    result = cur.fetchall()
-    print(result[0][2])
-    cur.execute(f"SELECT id, created_at FROM url_checks WHERE url_id={id} ORDER BY id DESC;")
+    cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.id = {id} ORDER BY url_checks.id DESC;")
     checks_website_data = cur.fetchall()
-    print(checks_website_data)
     cur.close()
     conn.close()
-    return render_template('/get_url_data.html',
-                           url=result, check_data=checks_website_data)
+    return render_template('/get_url_data.html', check_data=checks_website_data)
 
 
 @app.route('/urls/<id>/checks', methods=['POST'])
 def check_url(id):
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    create_date = date.today()
-    cur.execute("INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)", (id, create_date))
-    conn.commit()
-    cur.close()
-    conn.close()
-    flash('Страница успешно проверена', 'success')
-    return redirect(url_for('get_url_data', id=id))
+    cur.execute(f"SELECT * FROM urls WHERE id = {id}")
+    result = cur.fetchall()
+    print(cur.execute(f"SELECT name FROM urls WHERE id = {id}"))
+    url = result[0][1]
+    try:
+        requests.get(url)
+        status_code = requests.get(url).status_code
+        create_date = date.today()
+        cur.execute("INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)", (id, status_code, create_date))
+        conn.commit()
+        cur.close()
+        conn.close()
+        flash('Страница успешно проверена', 'success')
+        return redirect(url_for('get_url_data', id=id))
+    except Exception:
+        flash('Произошла ошибка при проверке', 'error')
+        return redirect(url_for('get_url_data', id=id))
