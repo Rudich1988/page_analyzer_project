@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup as bs
 from page_analyzer.correct_url import normalize_url
 from page_analyzer.find_tags import find_tags
 
+
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 

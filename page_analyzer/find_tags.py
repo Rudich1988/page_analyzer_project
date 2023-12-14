@@ -4,12 +4,20 @@ import requests
 
 def find_tags(response):
     soup = bs(response.text, 'html.parser')
-    tags = [soup.title, soup.h1, soup.description]
-    normalize_tags = []
-    for tag in tags:
-        if tag is None:
-            normalize_tags.append('')
-        else:
-            normalize_tags.append(tag.text)
-    return {'title': normalize_tags[0], 'h1': normalize_tags[1],
-            'description': normalize_tags[2]}
+    title = soup.title
+    if title is None:
+        title = ''
+    else:
+        title = title.text
+    h1 = soup.h1
+    if h1 is None:
+        h1 = ''
+    else:
+        h1 = h1.text
+    description = soup.find('meta', attrs={'name': 'description'})
+    if description is None:
+        description = ''
+    else:
+        description = description['content']
+    return {'title': title, 'h1': h1,
+            'description': description}

@@ -2,11 +2,6 @@
 
 {% block content %}
   <main class="flex-grow-1">
-    <!--{% for message in get_flashed_messages() %}
-      <div class="alert alert-danger" role="alert">
-        {{ message }}
-      </div>
-    {% endfor %}-->
     {% with errors = get_flashed_messages(category_filter=["error"]) %}
       {% if errors %}
         {% for msg in errors %}
@@ -23,9 +18,6 @@
           <p class="lead">Бесплатно проверяйте сайты на SEO-пригодность</p>
           <form action="{{ url_for('add_website') }}" method="post" class="d-flex justify-content-center" required>
             <input type="text" name="url" placeholder="https://www.example.com"value="{{ website_name['url'] }}"  class="form-control form-control-lg">
-            <!--{% if errors %}
-              {{errors['error']}}
-            {% endif %}-->
             <input type="submit" class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
           </form>
         </div>
