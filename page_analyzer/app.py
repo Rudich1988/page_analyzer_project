@@ -5,8 +5,10 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 import requests
+from bs4 import BeautifulSoup as bs
 
 from page_analyzer.correct_url import normalize_url
+from page_analyzer.find_tags import find_tags
 
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -40,7 +42,6 @@ def add_website():
                 cur.execute("INSERT INTO urls (name, created_at) VALUES (%s, %s)",
                             (website_url, create_date))
                 conn.commit()
-                #cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
                 cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
                 print(result)
@@ -51,7 +52,6 @@ def add_website():
             except Exception:
                 conn = psycopg2.connect(DATABASE_URL)
                 cur = conn.cursor()
-                #cur.execute(f"SELECT * FROM urls WHERE name = '{website_url}'")
                 cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
                 print(result)
@@ -89,13 +89,18 @@ def check_url(id):
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM urls WHERE id = {id}")
     result = cur.fetchall()
-    print(cur.execute(f"SELECT name FROM urls WHERE id = {id}"))
+    #print(cur.execute(f"SELECT name FROM urls WHERE id = {id}"))
     url = result[0][1]
     try:
-        requests.get(url)
-        status_code = requests.get(url).status_code
+        response = requests.get(url)
+        status_code = response.status_code
+        tags = find_tags(response)
+        #print(tags)
+        title = tags['title']
+        h1 = tags['h1']
+        description = tags['description']
         create_date = date.today()
-        cur.execute("INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)", (id, status_code, create_date))
+        cur.execute("INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (%s, %s, %s, %s, %s, %s)", (id, status_code, h1, title, description, create_date))
         conn.commit()
         cur.close()
         conn.close()
