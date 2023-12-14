@@ -94,6 +94,9 @@ def check_url(id):
     try:
         response = requests.get(url)
         status_code = response.status_code
+        if status_code > 299:
+            flash('Произошла ошибка при проверке', 'error')
+            return redirect(url_for('get_url_data', id=id))
         tags = find_tags(response)
         #print(tags)
         title = tags['title']
