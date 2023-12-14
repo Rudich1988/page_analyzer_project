@@ -17,8 +17,8 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 app = Flask(__name__)
 
-#app.secret_key = "secret_key"
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = "secret_key"
+#app.secret_key = os.getenv('SECRET_KEY')
 
 
 @app.route('/')
@@ -56,7 +56,6 @@ def add_website():
                 cur = conn.cursor()
                 cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
-                print(result)
                 cur.close()
                 conn.close()
                 flash('Страница уже существует', 'not success')
@@ -91,7 +90,6 @@ def check_url(id):
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM urls WHERE id = {id}")
     result = cur.fetchall()
-    #print(cur.execute(f"SELECT name FROM urls WHERE id = {id}"))
     url = result[0][1]
     try:
         response = requests.get(url)
@@ -100,7 +98,6 @@ def check_url(id):
             flash('Произошла ошибка при проверке', 'error')
             return redirect(url_for('get_url_data', id=id))
         tags = find_tags(response)
-        #print(tags)
         title = tags['title']
         h1 = tags['h1']
         description = tags['description']
