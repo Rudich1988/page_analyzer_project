@@ -46,7 +46,7 @@ def add_website():
                 conn.commit()
                 cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
-                print(result)
+                #print(result)
                 cur.close()
                 conn.close()
                 flash('Страница успешно добавлена', 'success')
