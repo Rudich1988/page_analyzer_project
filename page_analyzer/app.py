@@ -50,7 +50,8 @@ def add_website():
                 cur.close()
                 conn.close()
                 flash('Страница успешно добавлена', 'success')
-                return render_template('/get_url_data.html', check_data=result)
+                return redirect(url_for('get_url_data', id=result[0][0]))
+                #return render_template('/get_url_data.html', check_data=result)
             except Exception:
                 conn = psycopg2.connect(DATABASE_URL)
                 cur = conn.cursor()
@@ -59,7 +60,8 @@ def add_website():
                 cur.close()
                 conn.close()
                 flash('Страница уже существует', 'not success')
-                return render_template('/get_url_data.html', check_data=result)
+                return redirect(url_for('get_url_data', id=result[0][0]))
+                #return render_template('/get_url_data.html', check_data=result)
 
 
 @app.route('/urls')
