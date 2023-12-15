@@ -11,11 +11,14 @@ from page_analyzer.correct_url import normalize_url
 from page_analyzer.find_tags import find_tags
 
 
-load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+#load_dotenv()
+#DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 app = Flask(__name__)
+
+load_dotenv()
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 app.secret_key = "secret_key"
 #app.secret_key = os.getenv('SECRET_KEY')
