@@ -5,14 +5,9 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 import requests
-from bs4 import BeautifulSoup as bs
 
 from page_analyzer.correct_url import normalize_url
 from page_analyzer.find_tags import find_tags
-
-
-#load_dotenv()
-#DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 app = Flask(__name__)
@@ -21,7 +16,6 @@ load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 app.secret_key = "secret_key"
-#app.secret_key = os.getenv('SECRET_KEY')
 
 
 @app.route('/')
@@ -44,34 +38,50 @@ def add_website():
             cur = conn.cursor()
             try:
                 create_date = date.today()
-                cur.execute("INSERT INTO urls (name, created_at) VALUES (%s, %s)",
-                            (website_url, create_date))
+                cur.execute("INSERT INTO urls (name, created_at) "
+                            "VALUES (%s, %s)", (website_url, create_date))
                 conn.commit()
-                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
+                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, "
+                            f"url_checks.id, url_checks.status_code, "
+                            f"url_checks.h1, url_checks.title, "
+                            f"url_checks.description, "
+                            f"url_checks.created_at "
+                            f"FROM urls LEFT JOIN url_checks "
+                            f"ON urls.id = url_checks.url_id WHERE "
+                            f"urls.name = '{website_url}' "
+                            f"ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
-                #print(result)
                 cur.close()
                 conn.close()
                 flash('Страница успешно добавлена', 'success')
                 return redirect(url_for('get_url_data', id=result[0][0]))
-                #return render_template('/get_url_data.html', check_data=result)
             except Exception:
                 conn = psycopg2.connect(DATABASE_URL)
                 cur = conn.cursor()
-                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.name = '{website_url}' ORDER BY url_checks.id DESC;")
+                cur.execute(f"SELECT urls.id, urls.name, urls.created_at, "
+                            f"url_checks.id, url_checks.status_code, "
+                            f"url_checks.h1, url_checks.title, "
+                            f"url_checks.description, url_checks.created_at "
+                            f"FROM urls LEFT JOIN url_checks "
+                            f"ON urls.id = url_checks.url_id "
+                            f"WHERE urls.name = '{website_url}' "
+                            f"ORDER BY url_checks.id DESC;")
                 result = cur.fetchall()
                 cur.close()
                 conn.close()
                 flash('Страница уже существует', 'not success')
                 return redirect(url_for('get_url_data', id=result[0][0]))
-                #return render_template('/get_url_data.html', check_data=result)
 
 
 @app.route('/urls')
 def show_urls():
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    cur.execute("SELECT urls.id, urls.name, url_checks.status_code, MAX(url_checks.created_at) FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id GROUP BY urls.id, url_checks.status_code ORDER BY urls.id DESC;")
+    cur.execute("SELECT urls.id, urls.name, url_checks.status_code, "
+                "MAX(url_checks.created_at) FROM urls "
+                "LEFT JOIN url_checks ON urls.id = url_checks.url_id "
+                "GROUP BY urls.id, url_checks.status_code "
+                "ORDER BY urls.id DESC;")
     result = cur.fetchall()
     cur.close()
     conn.close()
@@ -82,7 +92,12 @@ def show_urls():
 def get_url_data(id):
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    cur.execute(f"SELECT urls.id, urls.name, urls.created_at, url_checks.id, url_checks.status_code, url_checks.h1, url_checks.title, url_checks.description, url_checks.created_at FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id WHERE urls.id = {id} ORDER BY url_checks.id DESC;")
+    cur.execute(f"SELECT urls.id, urls.name, urls.created_at, "
+                f"url_checks.id, url_checks.status_code, "
+                f"url_checks.h1, url_checks.title, url_checks.description, "
+                f"url_checks.created_at FROM urls "
+                f"LEFT JOIN url_checks ON urls.id = url_checks.url_id "
+                f"WHERE urls.id = {id} ORDER BY url_checks.id DESC;")
     checks_website_data = cur.fetchall()
     cur.close()
     conn.close()
@@ -107,7 +122,10 @@ def check_url(id):
         h1 = tags['h1']
         description = tags['description']
         create_date = date.today()
-        cur.execute("INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (%s, %s, %s, %s, %s, %s)", (id, status_code, h1, title, description, create_date))
+        cur.execute("INSERT INTO url_checks (url_id, status_code, h1, "
+                    "title, description, created_at) "
+                    "VALUES (%s, %s, %s, %s, %s, %s)",
+                    (id, status_code, h1, title, description, create_date))
         conn.commit()
         cur.close()
         conn.close()
