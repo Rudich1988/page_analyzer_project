@@ -5,10 +5,14 @@ import psycopg2
 import requests
 import validators
 from dotenv import load_dotenv
-#from flask import Flask, flash, redirect, render_template, request, url_for
 from page_analyzer.correct_url import normalize_url
 from page_analyzer.find_tags import find_tags
-from page_analyzer.psql_requests import SHOW_ALL_WEBSITES, get_url_data_request_with_id, get_url_data_request_with_url, get_all_urls_with_id
+from page_analyzer.psql_requests import (
+    SHOW_ALL_WEBSITES,
+    get_all_urls_with_id,
+    get_url_data_request_with_id,
+    get_url_data_request_with_url,
+)
 
 
 load_dotenv()
@@ -60,7 +64,7 @@ def add_website_view(request):
         cur.close()
         conn.close()
         return {'id': result[0][0], 'status': 'not success'}
-    
+
 
 def check_url_view(id):
     conn = psycopg2.connect(DATABASE_URL)
