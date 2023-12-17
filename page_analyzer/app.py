@@ -1,14 +1,14 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
-import validators
-import psycopg2
 import os
+#from datetime import date
+
+#import psycopg2
+#import requests
+#import validators
 from dotenv import load_dotenv
-from datetime import date
-import requests
-
-from page_analyzer.correct_url import normalize_url
-from page_analyzer.find_tags import find_tags
-
+from flask import Flask, flash, redirect, render_template, request, url_for
+#from page_analyzer.correct_url import normalize_url
+#from page_analyzer.find_tags import find_tags
+from page_analyzer.logic_views import show_urls_view, get_url_data_view, add_website_view, check_url_view
 
 app = Flask(__name__)
 
@@ -26,6 +26,18 @@ def show_form():
 
 @app.route('/urls', methods=['POST'])
 def add_website():
+    result = add_website_view(request)
+    if result['status'] == 'error':
+        flash('Некорректный URL', 'error')
+        return render_template('/index.html', website_name=result['website_data']), 422
+    elif result['status'] == 'success':
+        flash('Страница успешно добавлена', 'success')
+        return redirect(url_for('get_url_data', id=result['id']))
+    elif result['status'] == 'not success':
+        flash('Страница уже существует', 'not success')
+        return redirect(url_for('get_url_data', id=result['id']))
+    
+    '''
     if request.method == 'POST':
         website_data = request.form.to_dict()
         website_url = normalize_url(website_data['url'])
@@ -71,10 +83,12 @@ def add_website():
                 conn.close()
                 flash('Страница уже существует', 'not success')
                 return redirect(url_for('get_url_data', id=result[0][0]))
+    '''
 
 
 @app.route('/urls')
 def show_urls():
+    '''
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     cur.execute("SELECT urls.id, urls.name, url_checks.status_code, "
@@ -85,11 +99,14 @@ def show_urls():
     result = cur.fetchall()
     cur.close()
     conn.close()
+    '''
+    result = show_urls_view()
     return render_template('/show_all_urls.html', urls=result)
 
 
 @app.route('/urls/<id>')
 def get_url_data(id):
+    '''
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     cur.execute(f"SELECT urls.id, urls.name, urls.created_at, "
@@ -101,11 +118,20 @@ def get_url_data(id):
     checks_website_data = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('/get_url_data.html', check_data=checks_website_data)
+    '''
+    check_website_data = get_url_data_view(id)
+    return render_template('/get_url_data.html', check_data=check_website_data)
 
 
 @app.route('/urls/<id>/checks', methods=['POST'])
 def check_url(id):
+    result = check_url_view(id)
+    if result == 'error':
+        flash('Произошла ошибка при проверке', 'error')
+        return redirect(url_for('get_url_data', id=id))
+    flash('Страница успешно проверена', 'success')
+    return redirect(url_for('get_url_data', id=id))
+    '''
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM urls WHERE id = {id}")
@@ -134,3 +160,8 @@ def check_url(id):
     except Exception:
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('get_url_data', id=id))
+    '''
+
+
+if __name__ == '__main__':
+    app.run()
