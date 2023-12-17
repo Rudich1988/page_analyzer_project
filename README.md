@@ -4,4 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/b573da64cfd884eb8d20/maintainability)](https://codeclimate.com/github/Rudich1988/python-project-83/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b573da64cfd884eb8d20/test_coverage)](https://codeclimate.com/github/Rudich1988/python-project-83/test_coverage)
 
-[Ссылка на домен](https://hexlet-code-7njy.onrender.com/)
+
+## Проект анализатор страниц
+[Анализатор страниц](https://hexlet-code-7njy.onrender.com/) – это сайт, который анализирует указанные страницы на SEO-пригодность. С помощью этого сайта также можно смотреть некоторую информацию о сайте, включая его описание.
+
