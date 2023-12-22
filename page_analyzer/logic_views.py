@@ -47,12 +47,12 @@ def add_website_view(request):
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     try:
-        create_date = date.today()
-        cur.execute("INSERT INTO urls (name, created_at) "
-                    "VALUES (%s, %s)", (website_url, create_date))
+        cur.execute("INSERT INTO urls (name) "
+                    "VALUES (%s)", (website_url,))
         conn.commit()
         cur.execute(get_url_data_request_with_url(website_url))
         result = cur.fetchall()
+        print(result)
         cur.close()
         conn.close()
         return {'id': result[0][0], 'status': 'success'}
@@ -61,6 +61,7 @@ def add_website_view(request):
         cur = conn.cursor()
         cur.execute(get_url_data_request_with_url(website_url))
         result = cur.fetchall()
+        print(result)
         cur.close()
         conn.close()
         return {'id': result[0][0], 'status': 'not success'}
@@ -81,11 +82,10 @@ def check_url_view(id):
         title = tags['title']
         h1 = tags['h1']
         description = tags['description']
-        create_date = date.today()
         cur.execute("INSERT INTO url_checks (url_id, status_code, h1, "
-                    "title, description, created_at) "
-                    "VALUES (%s, %s, %s, %s, %s, %s)",
-                    (id, status_code, h1, title, description, create_date))
+                    "title, description) "
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (id, status_code, h1, title, description))
         conn.commit()
         cur.close()
         conn.close()
