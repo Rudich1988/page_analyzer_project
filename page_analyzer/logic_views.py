@@ -10,7 +10,6 @@ from page_analyzer.psql_requests import (
     SHOW_ALL_WEBSITES,
     get_all_urls_with_id,
     get_url_data_request_with_id,
-    get_url_data_request_with_url,
     get_url_id_with_website_url,
 )
 from psycopg2.extras import NamedTupleCursor
@@ -57,30 +56,17 @@ def add_website_view(request):
     if not is_url_valid(website_url):
         return {'website_data': website_data, 'status': 'error'}
     conn = connect_database()
-    #cur = conn.cursor()
     try:
         conn.cursor().execute("INSERT INTO urls (name) "
-                    "VALUES (%s)", (website_url,))
+                              "VALUES (%s)", (website_url,))
         conn.commit()
-        #cur.execute(get_url_data_request_with_url(website_url))
-        #result = cur.fetchone()
-        
-        #!!!!
-        #cur.close()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(get_url_id_with_website_url(website_url))
             result = cur.fetchone()
-        #!!!!
-
-        #cur.close()
         conn.close()
         return {'id': result.id, 'status': 'success'}
     except Exception:
         conn = connect_database()
-        #cur = conn.cursor()
-        #cur.execute(get_url_data_request_with_url(website_url))
-        #result = cur.fetchone()
-        #cur.close()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(get_url_id_with_website_url(website_url))
             result = cur.fetchone()
