@@ -28,3 +28,7 @@ def get_url_data_request_with_url(website_url):
 
 def get_all_urls_with_id(id):
     return f"SELECT * FROM urls WHERE id = {id}"
+
+
+def get_url_id_with_website_url(website_url):
+    return (f"SELECT urls.id FROM urls WHERE urls.name='{website_url}'")
