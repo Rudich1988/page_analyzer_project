@@ -59,7 +59,7 @@ def add_website_view(request):
     conn = connect_database()
     #cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO urls (name) "
+        conn.cursor().execute("INSERT INTO urls (name) "
                     "VALUES (%s)", (website_url,))
         conn.commit()
         #cur.execute(get_url_data_request_with_url(website_url))
@@ -76,7 +76,7 @@ def add_website_view(request):
         conn.close()
         return {'id': result.id, 'status': 'success'}
     except Exception:
-        #conn = connect_database()
+        conn = connect_database()
         #cur = conn.cursor()
         #cur.execute(get_url_data_request_with_url(website_url))
         #result = cur.fetchone()
