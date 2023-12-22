@@ -17,6 +17,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 app.secret_key = os.getenv('SECRET_KEY')
 
+
 @app.route('/')
 def show_form():
     website_name = {'url': ''}
