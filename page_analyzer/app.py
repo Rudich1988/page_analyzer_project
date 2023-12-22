@@ -24,25 +24,23 @@ def show_form():
     return render_template('/index.html', website_name=website_name)
 
 
-@app.route('/urls', methods=['POST'])
+@app.route('/urls', methods=['GET', 'POST'])
 def add_website():
-    result = add_website_view(request)
-    if result['status'] == 'error':
-        flash('Некорректный URL', 'error')
-        return render_template('/index.html',
-                               website_name=result['website_data']), 422
-    elif result['status'] == 'success':
-        flash('Страница успешно добавлена', 'success')
-        return redirect(url_for('get_url_data', id=result['id']))
-    elif result['status'] == 'not success':
-        flash('Страница уже существует', 'not success')
-        return redirect(url_for('get_url_data', id=result['id']))
-
-
-@app.route('/urls')
-def show_urls():
-    result = show_urls_view()
-    return render_template('/show_all_urls.html', urls=result)
+    if request.method == 'POST':
+        result = add_website_view(request)
+        if result['status'] == 'error':
+            flash('Некорректный URL', 'error')
+            return render_template('/index.html',
+                                   website_name=result['website_data']), 422
+        elif result['status'] == 'success':
+            flash('Страница успешно добавлена', 'success')
+            return redirect(url_for('get_url_data', id=result['id']))
+        elif result['status'] == 'not success':
+            flash('Страница уже существует', 'not success')
+            return redirect(url_for('get_url_data', id=result['id']))
+    else:
+        result = show_urls_view()
+        return render_template('/show_all_urls.html', urls=result)
 
 
 @app.route('/urls/<id>')
