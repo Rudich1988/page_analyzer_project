@@ -20,7 +20,7 @@ make install
 - Сделайте экспорт переменных, находящихся в файле .env:
 
 ```python
-export {veriable}={veriable_name}
+export {veriable}={veriable_value}
 ```
 
 ```python

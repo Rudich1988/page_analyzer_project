@@ -15,8 +15,8 @@ app = Flask(__name__)
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-app.secret_key = "secret_key"
-
+#app.secret_key = "secret_key"
+app.secret_key = os.getenv('SECRET_KEY')
 
 @app.route('/')
 def show_form():
