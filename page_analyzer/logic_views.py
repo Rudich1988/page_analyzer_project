@@ -14,8 +14,15 @@ from page_analyzer.psql_requests import (
 )
 
 
+LINE_LENGTH = 255
+
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
+
+
+def is_url_valid(website_url):
+    if validators.url(website_url) and len(website_url) <= LINE_LENGTH:
+        return True
 
 
 def show_urls_view():
@@ -41,7 +48,7 @@ def get_url_data_view(id):
 def add_website_view(request):
     website_data = request.form.to_dict()
     website_url = normalize_url(website_data['url'])
-    if type(validators.url(website_url)) != bool or len(website_url) > 255:
+    if not is_url_valid(website_url):
         return {'website_data': website_data, 'status': 'error'}
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
