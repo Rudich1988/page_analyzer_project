@@ -25,8 +25,13 @@ def is_url_valid(website_url):
         return True
 
 
-def show_urls_view():
+def connect_database():
     conn = psycopg2.connect(DATABASE_URL)
+    return conn
+
+
+def show_urls_view():
+    conn = connect_database()
     cur = conn.cursor()
     cur.execute(SHOW_ALL_WEBSITES)
     result = cur.fetchall()
@@ -36,7 +41,7 @@ def show_urls_view():
 
 
 def get_url_data_view(id):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = connect_database()
     cur = conn.cursor()
     cur.execute(get_url_data_request_with_id(id))
     checks_website_data = cur.fetchall()
@@ -50,7 +55,7 @@ def add_website_view(request):
     website_url = normalize_url(website_data['url'])
     if not is_url_valid(website_url):
         return {'website_data': website_data, 'status': 'error'}
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = connect_database()
     cur = conn.cursor()
     try:
         cur.execute("INSERT INTO urls (name) "
@@ -58,23 +63,21 @@ def add_website_view(request):
         conn.commit()
         cur.execute(get_url_data_request_with_url(website_url))
         result = cur.fetchall()
-        print(result)
         cur.close()
         conn.close()
         return {'id': result[0][0], 'status': 'success'}
     except Exception:
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = connect_database()
         cur = conn.cursor()
         cur.execute(get_url_data_request_with_url(website_url))
         result = cur.fetchall()
-        print(result)
         cur.close()
         conn.close()
         return {'id': result[0][0], 'status': 'not success'}
 
 
 def check_url_view(id):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = connect_database()
     cur = conn.cursor()
     cur.execute(get_all_urls_with_id(id))
     result = cur.fetchall()
