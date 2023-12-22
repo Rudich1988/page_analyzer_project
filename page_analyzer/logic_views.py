@@ -62,26 +62,26 @@ def add_website_view(request):
                     "VALUES (%s)", (website_url,))
         conn.commit()
         cur.execute(get_url_data_request_with_url(website_url))
-        result = cur.fetchall()
+        result = cur.fetchone()
         cur.close()
         conn.close()
-        return {'id': result[0][0], 'status': 'success'}
+        return {'id': result[0], 'status': 'success'}
     except Exception:
         conn = connect_database()
         cur = conn.cursor()
         cur.execute(get_url_data_request_with_url(website_url))
-        result = cur.fetchall()
+        result = cur.fetchone()
         cur.close()
         conn.close()
-        return {'id': result[0][0], 'status': 'not success'}
+        return {'id': result[0], 'status': 'not success'}
 
 
 def check_url_view(id):
     conn = connect_database()
     cur = conn.cursor()
     cur.execute(get_all_urls_with_id(id))
-    result = cur.fetchall()
-    url = result[0][1]
+    result = cur.fetchone()
+    url = result[1]
     try:
         response = requests.get(url)
         status_code = response.status_code
