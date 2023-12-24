@@ -57,19 +57,13 @@ def insert_url(website_url):
             result = cur.fetchone()
         conn.close()
         return {'id': result.id, 'status': 'not success'}
-    
+
 
 def get_all_urls():
     conn = connect_database()
     with conn.cursor() as cur:
-       cur.execute(SHOW_ALL_WEBSITES)
-       result = cur.fetchall() 
-    '''
-    cur = conn.cursor()
-    cur.execute(SHOW_ALL_WEBSITES)
-    result = cur.fetchall()
-    cur.close()
-    '''
+        cur.execute(SHOW_ALL_WEBSITES)
+        result = cur.fetchall()
     conn.close()
     return result
 
