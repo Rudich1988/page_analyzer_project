@@ -17,7 +17,7 @@ SHOW_ALL_WEBSITES = ("SELECT urls.id, urls.name, url_checks.status_code, "
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-
+'''
 def get_url_data_request_with_id(id):
     return (f"SELECT urls.id, urls.name, urls.created_at, "
             f"url_checks.id, url_checks.status_code, "
@@ -25,6 +25,7 @@ def get_url_data_request_with_id(id):
             f"url_checks.created_at FROM urls "
             f"LEFT JOIN url_checks ON urls.id = url_checks.url_id "
             f"WHERE urls.id = {id} ORDER BY url_checks.id DESC;")
+'''
 
 
 def get_checks(id):
@@ -36,16 +37,12 @@ def get_website(id):
     return (f"SELECT * FROM urls WHERE id = {id};")
 
 
-
-
-
-
 def get_url_data_with_id(id):
     return f"SELECT * FROM urls WHERE id = {id}"
 
 
-def get_url_id_with_website_url(website_url):
-    return (f"SELECT id FROM urls WHERE name='{website_url}'")
+def get_url_data_with_website_url(website_url):
+    return (f"SELECT * FROM urls WHERE name='{website_url}'")
 
 
 def connect_database():
@@ -60,14 +57,14 @@ def insert_url(website_url):
                               "VALUES (%s)", (website_url,))
         conn.commit()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute(get_url_id_with_website_url(website_url))
+            cur.execute(get_url_data_with_website_url(website_url))
             result = cur.fetchone()
         conn.close()
         return {'id': result.id, 'status': 'success'}
     except Exception:
         conn = connect_database()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute(get_url_id_with_website_url(website_url))
+            cur.execute(get_url_data_with_website_url(website_url))
             result = cur.fetchone()
         conn.close()
         return {'id': result.id, 'status': 'not success'}
@@ -85,29 +82,29 @@ def get_all_urls():
 
 def get_url_data_view(id):
     conn = connect_database()
-    #cur = conn.cursor()
-    #cur.execute(get_url_data_request_with_id(id))
-    #checks_website_data = cur.fetchall()
-
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute(get_website(id))
         website_data = cur.fetchone()
         cur.execute(get_checks(id))
         checks_website_data = cur.fetchall()
-
-    #cur.close()
     conn.close()
     return {'website_data': website_data,
             'checks_website_data': checks_website_data}
-    #return checks_website_data
 
 
 def check_url_view(id):
+    '''
     conn = connect_database()
     cur = conn.cursor()
-    cur.execute(get_url_data_with_id(id))   #cur.execute(get_all_urls_with_id(id))
+    cur.execute(get_url_data_with_id(id))
     result = cur.fetchone()
     url = result[1]
+    '''
+    conn = connect_database()
+    cur = conn.cursor(cursor_factory=NamedTupleCursor)
+    cur.execute(get_url_data_with_id(id))
+    result = cur.fetchone()
+    url = result.name
     try:
         response = requests.get(url)
         status_code = response.status_code

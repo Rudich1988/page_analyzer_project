@@ -36,17 +36,16 @@ def add_website():
             return redirect(url_for('get_url_data', id=result['id']))
     else:
         result = get_all_urls()
-        #result = show_urls_view()
         return render_template('/show_all_urls.html', urls=result)
 
 
 @app.route('/urls/<id>')
 def get_url_data(id):
-    #check_website_data = get_url_data_view(id)
     data = get_url_data_view(id)
     website_data = data['website_data']
     check_data = data['checks_website_data']
-    return render_template('/get_url_data.html', check_data=check_data, website_data=website_data)
+    return render_template('/get_url_data.html',
+                           check_data=check_data, website_data=website_data)
 
 
 @app.route('/urls/<id>/checks', methods=['POST'])
