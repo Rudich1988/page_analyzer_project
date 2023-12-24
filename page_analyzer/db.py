@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from page_analyzer.find_tags import find_tags
 from psycopg2.extras import NamedTupleCursor
 
-
 SHOW_ALL_WEBSITES = ("SELECT urls.id, urls.name, url_checks.status_code, "
                      "MAX(url_checks.created_at) FROM urls "
                      "LEFT JOIN url_checks ON urls.id = url_checks.url_id "
@@ -16,16 +15,6 @@ SHOW_ALL_WEBSITES = ("SELECT urls.id, urls.name, url_checks.status_code, "
 
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
-
-'''
-def get_url_data_request_with_id(id):
-    return (f"SELECT urls.id, urls.name, urls.created_at, "
-            f"url_checks.id, url_checks.status_code, "
-            f"url_checks.h1, url_checks.title, url_checks.description, "
-            f"url_checks.created_at FROM urls "
-            f"LEFT JOIN url_checks ON urls.id = url_checks.url_id "
-            f"WHERE urls.id = {id} ORDER BY url_checks.id DESC;")
-'''
 
 
 def get_checks(id):
@@ -72,10 +61,15 @@ def insert_url(website_url):
 
 def get_all_urls():
     conn = connect_database()
+    with conn.cursor() as cur:
+       cur.execute(SHOW_ALL_WEBSITES)
+       result = cur.fetchall() 
+    '''
     cur = conn.cursor()
     cur.execute(SHOW_ALL_WEBSITES)
     result = cur.fetchall()
     cur.close()
+    '''
     conn.close()
     return result
 
@@ -93,13 +87,6 @@ def get_url_data_view(id):
 
 
 def check_url_view(id):
-    '''
-    conn = connect_database()
-    cur = conn.cursor()
-    cur.execute(get_url_data_with_id(id))
-    result = cur.fetchone()
-    url = result[1]
-    '''
     conn = connect_database()
     cur = conn.cursor(cursor_factory=NamedTupleCursor)
     cur.execute(get_url_data_with_id(id))

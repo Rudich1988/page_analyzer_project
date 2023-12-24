@@ -1,5 +1,3 @@
-import os
-
 import validators
 from page_analyzer.correct_url import normalize_url
 from page_analyzer.db import insert_url
