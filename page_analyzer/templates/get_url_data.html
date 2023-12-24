@@ -18,21 +18,21 @@
     {% endif %}
   {% endfor %}
   <div class="container-lg mt-3">
-    <h1>Сайт: {{ check_data[0][1] }}</h1>
+    <h1>Сайт: {{ website_data.name }}</h1>
   <div class="table-responsive">
       <table class="table table-bordered table-hover text-nowrap" data-test="url">
         <tbody>
           <tr>
             <td>ID</td>
-            <td>{{ check_data[0][0] }}</td>
+            <td>{{ website_data.id }}</td>
           </tr>
           <tr>
             <td>Имя</td>
-            <td>{{ check_data[0][1] }}</td>
+            <td>{{ website_data.name }}</td>
           </tr>
           <tr>
             <td>Дата создания</td>
-            <td>{{ check_data[0][2] }}</td>
+            <td>{{ website_data.created_at }}</td>
           </tr>
         </tbody>
       </table>
@@ -55,15 +55,15 @@
         <th>Дата создания</th>
       </tr>
     </thead>
-    {% if check_data[0][3] %}
+    {% if check_data %}
       {% for data in check_data %}
         <tbody>
-          <td>{{ data[3] }}</td>
-          <td>{{ data[4] }}</td>
-          <td>{{ data[5] }}</td>
-          <td>{{ data[6] }}</td>
-          <td>{{ data[7] }}</td>
-          <td>{{ data[8] }}</td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.status_code }}</td>
+          <td>{{ data.h1 }}</td>
+          <td>{{ data.title }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.created_at }}</td>
         </tbody>
       {% endfor %}
     {% endif %}

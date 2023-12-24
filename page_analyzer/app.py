@@ -2,12 +2,8 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
-from page_analyzer.logic_views import (
-    add_website_view,
-    check_url_view,
-    get_url_data_view,
-    show_urls_view,
-)
+from page_analyzer.logic_views import add_website_view
+from page_analyzer.db import get_all_urls, get_url_data_view, check_url_view
 
 
 app = Flask(__name__)
@@ -39,14 +35,18 @@ def add_website():
             flash('Страница уже существует', 'not success')
             return redirect(url_for('get_url_data', id=result['id']))
     else:
-        result = show_urls_view()
+        result = get_all_urls()
+        #result = show_urls_view()
         return render_template('/show_all_urls.html', urls=result)
 
 
 @app.route('/urls/<id>')
 def get_url_data(id):
-    check_website_data = get_url_data_view(id)
-    return render_template('/get_url_data.html', check_data=check_website_data)
+    #check_website_data = get_url_data_view(id)
+    data = get_url_data_view(id)
+    website_data = data['website_data']
+    check_data = data['checks_website_data']
+    return render_template('/get_url_data.html', check_data=check_data, website_data=website_data)
 
 
 @app.route('/urls/<id>/checks', methods=['POST'])
