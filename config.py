@@ -19,5 +19,6 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DATABASE_URL = DATABASE_URL
+    SECRET_KEY = os.getenv('SECRET_KEY')
     #DATABASE_URL = 'postgresql://rudi4:password@localhost:5432/hexlet'
     # или же нужно здесь как раз сделать доступ к переменной DATABASE_URL через os.getenv ? чтобы работали тесты

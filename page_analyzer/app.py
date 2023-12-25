@@ -21,6 +21,7 @@ app.secret_key = app.config['SECRET_KEY']
 @app.route('/')
 def show_form():
     print(app.config['DATABASE_URL'])
+    print(app.config['SECRET_KEY'])
     print(app.config)
     website_name = {'url': ''}
     return render_template('/index.html', website_name=website_name)
