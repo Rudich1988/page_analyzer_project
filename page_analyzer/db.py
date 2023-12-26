@@ -1,5 +1,3 @@
-import os
-
 import psycopg2
 import requests
 from page_analyzer import app
