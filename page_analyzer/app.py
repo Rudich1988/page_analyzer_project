@@ -1,21 +1,16 @@
 import os
 
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 from page_analyzer.adding_website import add_website_view
-from page_analyzer.db import get_all_urls, get_url_data_view, check_url_view
-
+from page_analyzer.db import check_url_view, get_all_urls, get_url_data_view
 
 app = Flask(__name__)
-#app.config.from_envvar('config.ProductionConfig')
-#app.config.from_object('config.ProductionConfig')
-app.config.from_object('config.DevelopmentConfig')
 
-#load_dotenv()
-#DATABASE_URL = os.getenv('DATABASE_URL')
 
-#app.secret_key = os.getenv('SECRET_KEY')
-app.secret_key = app.config['SECRET_KEY']
+load_dotenv()
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 @app.route('/')

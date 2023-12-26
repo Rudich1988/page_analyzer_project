@@ -1,9 +1,8 @@
 import os
-from page_analyzer import app
 
 import psycopg2
 import requests
-#from dotenv import load_dotenv
+from page_analyzer import app
 from page_analyzer.find_tags import find_tags
 from psycopg2.extras import NamedTupleCursor
 
@@ -12,10 +11,6 @@ SHOW_ALL_WEBSITES = ("SELECT urls.id, urls.name, url_checks.status_code, "
                      "LEFT JOIN url_checks ON urls.id = url_checks.url_id "
                      "GROUP BY urls.id, url_checks.status_code "
                      "ORDER BY urls.id DESC;")
-
-
-#load_dotenv()
-#DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 def get_checks(id):
@@ -36,7 +31,6 @@ def get_url_data_with_website_url(website_url):
 
 
 def connect_database():
-    #conn = psycopg2.connect(DATABASE_URL)
     conn = psycopg2.connect(app.app.config['DATABASE_URL'])
     return conn
 
