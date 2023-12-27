@@ -11,23 +11,29 @@ def connect_database():
 
 
 def insert_url(website_url):
+    status = 'success'
     conn = connect_database()
     try:
         conn.cursor().execute("INSERT INTO urls (name) "
                               "VALUES (%s)", (website_url,))
         conn.commit()
-        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
-            result = cur.fetchone()
-        conn.close()
-        return {'id': result.id, 'status': 'success'}
     except Exception:
+        status = 'not success'
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+        cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
+        result = cur.fetchone()
+    conn.close()
+    return {'id': result.id, 'status': status}
+    '''
+    except Exception:
+        print('hello')
         conn = connect_database()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
             result = cur.fetchone()
         conn.close()
         return {'id': result.id, 'status': 'not success'}
+    '''
 
 
 def get_all_urls():
