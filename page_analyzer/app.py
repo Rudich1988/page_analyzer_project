@@ -27,8 +27,8 @@ def add_website():
         if result['status'] == 'error':
             flash('Некорректный URL', 'error')
             return (render_template('/index.html',
-                                   website_name=result['website_data']),
-                                   HTTPStatus.UNPROCESSABLE_ENTITY)
+                                    website_name=result['website_data']),
+                    HTTPStatus.UNPROCESSABLE_ENTITY)
         elif result['status'] == 'success':
             flash('Страница успешно добавлена', 'success')
             return redirect(url_for('get_url_data', id=result['id']))
