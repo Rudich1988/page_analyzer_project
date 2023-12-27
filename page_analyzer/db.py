@@ -55,10 +55,11 @@ def insert_url(website_url):
 
 def get_all_urls():
     conn = connect_database()
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute(SHOW_ALL_WEBSITES)
         result = cur.fetchall()
     conn.close()
+    print(result)
     return result
 
 

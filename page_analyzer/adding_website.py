@@ -6,8 +6,7 @@ LINE_LENGTH = 255
 
 
 def is_url_valid(website_url):
-    if validators.url(website_url) and len(website_url) <= LINE_LENGTH:
-        return True
+    return validators.url(website_url) and len(website_url) <= LINE_LENGTH
 
 
 def add_website_view(request):
