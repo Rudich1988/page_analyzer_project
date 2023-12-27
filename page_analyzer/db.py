@@ -4,23 +4,6 @@ from page_analyzer import app
 from page_analyzer.find_tags import find_tags
 from psycopg2.extras import NamedTupleCursor
 
-'''
-def get_checks(id):
-    return (f"SELECT * FROM url_checks "
-            f"WHERE url_id = {id} ORDER BY id DESC;")
-
-
-def get_website(id):
-    return (f"SELECT * FROM urls WHERE id = {id};")
-
-
-def get_url_data_with_id(id):
-    return f"SELECT * FROM urls WHERE id = {id}"
-
-
-def get_url_data_with_website_url(website_url):
-    return (f"SELECT * FROM urls WHERE name='{website_url}'")
-'''
 
 def connect_database():
     conn = psycopg2.connect(app.app.config['DATABASE_URL'])
@@ -69,8 +52,7 @@ def get_url_data_view(id):
                     f"WHERE url_id = {id} ORDER BY id DESC;")
         checks_website_data = cur.fetchall()
     conn.close()
-    return {'website_data': website_data,
-            'checks_website_data': checks_website_data}
+    return website_data, checks_website_data
 
 
 def check_url_view(id):

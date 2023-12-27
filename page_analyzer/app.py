@@ -40,9 +40,7 @@ def add_website():
 
 @app.route('/urls/<id>')
 def get_url_data(id):
-    data = get_url_data_view(id)
-    website_data = data['website_data']
-    check_data = data['checks_website_data']
+    website_data, check_data = get_url_data_view(id)
     return render_template('/get_url_data.html',
                            check_data=check_data, website_data=website_data)
 
