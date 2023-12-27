@@ -38,14 +38,14 @@ def add_website():
         return render_template('/show_all_urls.html', urls=result)
 
 
-@app.route('/urls/<id>')
+@app.route('/urls/<int:id>')
 def get_url_data(id):
     website_data, check_data = get_url_data_view(id)
     return render_template('/get_url_data.html',
                            check_data=check_data, website_data=website_data)
 
 
-@app.route('/urls/<id>/checks', methods=['POST'])
+@app.route('/urls/<int:id>/checks', methods=['POST'])
 def check_url(id):
     result = check_url_view(id)
     if result == 'error':
