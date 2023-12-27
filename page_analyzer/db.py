@@ -19,11 +19,13 @@ def insert_url(website_url):
         conn.commit()
     except Exception:
         status = 'not success'
-    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-        cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
-        result = cur.fetchone()
-    conn.close()
-    return {'id': result.id, 'status': status}
+    finally:
+        conn = connect_database()
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+            cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
+            result = cur.fetchone()
+        conn.close()
+        return {'id': result.id, 'status': status}
     '''
     except Exception:
         print('hello')
