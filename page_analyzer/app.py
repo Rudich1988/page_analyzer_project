@@ -1,4 +1,5 @@
 import os
+from http import HTTPStatus
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -25,8 +26,9 @@ def add_website():
         result = add_website_view(request)
         if result['status'] == 'error':
             flash('Некорректный URL', 'error')
-            return render_template('/index.html',
-                                   website_name=result['website_data']), 422
+            return (render_template('/index.html',
+                                   website_name=result['website_data']),
+                                   HTTPStatus.UNPROCESSABLE_ENTITY)
         elif result['status'] == 'success':
             flash('Страница успешно добавлена', 'success')
             return redirect(url_for('get_url_data', id=result['id']))
