@@ -24,17 +24,31 @@ def show_form():
 def add_website():
     if request.method == 'POST':
         result = add_website_view(request)
+        '''
         if result['status'] == 'error':
             flash('Некорректный URL', 'error')
             return (render_template('/index.html',
                                     website_name=result['website_data']),
-                    HTTPStatus.UNPROCESSABLE_ENTITY)
+                    HTTPStatus.UNPROCESSABLE_ENTITY)      
         elif result['status'] == 'success':
             flash('Страница успешно добавлена', 'success')
             return redirect(url_for('get_url_data', id=result['id']))
         elif result['status'] == 'not success':
             flash('Страница уже существует', 'not success')
             return redirect(url_for('get_url_data', id=result['id']))
+        '''
+        match result['status']:
+            case 'error':
+                flash('Некорректный URL', 'error')
+                return (render_template('/index.html',
+                                        website_name=result['website_data']),
+                        HTTPStatus.UNPROCESSABLE_ENTITY)
+            case 'success':
+                flash('Страница успешно добавлена', 'success')
+                return redirect(url_for('get_url_data', id=result['id']))
+            case 'not success':
+                flash('Страница уже существует', 'not success')
+                return redirect(url_for('get_url_data', id=result['id']))
     else:
         result = get_all_urls()
         return render_template('/show_all_urls.html', urls=result)
