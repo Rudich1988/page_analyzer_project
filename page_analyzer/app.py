@@ -20,8 +20,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 @app.route('/')
 def show_form():
-    website_name = {'url': ''}
-    return render_template('/index.html', website_name=website_name)
+    return render_template('/index.html')
 
 
 @app.route('/urls', methods=['GET', 'POST'])
@@ -37,7 +36,7 @@ def add_website():
             case Statuses.ERROR:
                 flash('Некорректный URL', 'error')
                 return (render_template('/index.html',
-                                        website_name=result['website_data']),
+                                        web_name=result['website_data']['url']),
                         HTTPStatus.UNPROCESSABLE_ENTITY)
             case Statuses.SUCCESS:
                 flash('Страница успешно добавлена', 'success')
