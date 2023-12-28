@@ -6,6 +6,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from page_analyzer.db import (check_url_view, get_all_urls,
                               get_url_data_view, insert_url)
 from page_analyzer.url_utils import normalize_url, is_url_valid
+from page_analyzer.enums import Statuses
 
 app = Flask(__name__)
 
@@ -31,15 +32,18 @@ def add_website():
         else:
             result = insert_url(website_url)
         match result['status']:
-            case 'error':
+            #case 'error':
+            case Statuses.ERROR:
                 flash('Некорректный URL', 'error')
                 return (render_template('/index.html',
                                         website_name=result['website_data']),
                         HTTPStatus.UNPROCESSABLE_ENTITY)
-            case 'success':
+            #case 'success':
+            case Statuses.SUCCESS:
                 flash('Страница успешно добавлена', 'success')
                 return redirect(url_for('get_url_data', id=result['id']))
-            case 'not success':
+            #case 'not success':
+            case Statuses.NOT_SUCCESS:
                 flash('Страница уже существует', 'not success')
                 return redirect(url_for('get_url_data', id=result['id']))
     else:
@@ -57,7 +61,8 @@ def get_url_data(id):
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def check_url(id):
     result = check_url_view(id)
-    if result == 'error':
+    #if result == 'error':
+    if result == Statuses.ERROR:
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('get_url_data', id=id))
     flash('Страница успешно проверена', 'success')

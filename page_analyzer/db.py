@@ -3,6 +3,7 @@ import requests
 from page_analyzer import app
 from page_analyzer.find_tags import find_tags
 from psycopg2.extras import NamedTupleCursor
+from page_analyzer.enums import Statuses
 
 
 def connect_database():
@@ -11,14 +12,16 @@ def connect_database():
 
 
 def insert_url(website_url):
-    status = 'success'
+    #status = 'success'
+    status = Statuses.SUCCESS
     conn = connect_database()
     try:
         conn.cursor().execute("INSERT INTO urls (name) "
                               "VALUES (%s)", (website_url,))
         conn.commit()
     except Exception:
-        status = 'not success'
+        #status = 'not success'
+        status = Statuses.NOT_SUCCESS
     finally:
         conn = connect_database()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
@@ -59,11 +62,15 @@ def check_url_view(id):
     cur.execute(f"SELECT * FROM urls WHERE id = {id}")
     result = cur.fetchone()
     url = result.name
+    print(url)
+    print(result)
+    print(requests.get(url).status_code)
     try:
         response = requests.get(url)
         status_code = response.status_code
         if status_code != 200:
-            return 'error'
+            #return 'error'
+            return Statuses.ERROR
         tags = find_tags(response)
         title = tags['title']
         h1 = tags['h1']
@@ -75,6 +82,9 @@ def check_url_view(id):
         conn.commit()
         cur.close()
         conn.close()
-        return 'success'
+        #return 'success'
+        return Statuses.SUCCESS
     except Exception:
-        return 'error'
+        #print(requests.get(url).status_code)
+        #return 'error'
+        return Statuses.ERROR
