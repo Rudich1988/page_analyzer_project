@@ -14,21 +14,11 @@ publish:
 package-install:
 	python3 -m pip install --user dist/*.whl
 
-test:
-	poetry run pytest
-
-test-coverage:
-	poetry run pytest --cov=page_analyzer --cov-report xml
 
 lint:
 	poetry run flake8 page_analyzer
 
-selfcheck:
-	poetry check
-
-check: selfcheck test lint
-
 build:
 	./build.sh
 
-.PHONY: install test lint check build
+.PHONY: install lint build
