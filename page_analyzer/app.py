@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
-#from page_analyzer.adding_website import add_website_view
-from page_analyzer.db import check_url_view, get_all_urls, get_url_data_view, insert_url
+from page_analyzer.db import (check_url_view, get_all_urls,
+                              get_url_data_view, insert_url)
 from page_analyzer.url_utils import normalize_url, is_url_valid
 
 app = Flask(__name__)
@@ -24,16 +24,12 @@ def show_form():
 @app.route('/urls', methods=['GET', 'POST'])
 def add_website():
     if request.method == 'POST':
-        #result = add_website_view(request)
-        
         website_data = request.form.to_dict()
         website_url = normalize_url(website_data['url'])
         if not is_url_valid(website_url):
             result = {'website_data': website_data, 'status': 'error'}
         else:
             result = insert_url(website_url)
-
-
         match result['status']:
             case 'error':
                 flash('Некорректный URL', 'error')
