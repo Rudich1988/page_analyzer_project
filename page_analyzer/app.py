@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
-from page_analyzer.db import (get_all_urls,
-                              get_url_data_view, insert_url, get_url_name, check_url_view)
+from page_analyzer.db import (get_all_urls, get_url_data_view,
+                              insert_url, get_url_name, check_url_view)
 from page_analyzer.url_utils import normalize_url, is_url_valid
 from page_analyzer.enums import Statuses
 from page_analyzer.find_tags import find_tags
@@ -64,7 +64,6 @@ def check_url(id):
         response = requests.get(url)
         status_code = response.status_code
         if status_code != 200:
-            print('не дошло')
             flash('Произошла ошибка при проверке', 'error')
             return redirect(url_for('get_url_data', id=id))
         tags = find_tags(url)
@@ -72,10 +71,7 @@ def check_url(id):
                                 tags['h1'], tags['description'])
     except Exception:
         result = Statuses.ERROR
-
-    #result = check_url_view(id)
     if result == Statuses.ERROR:
-        print('@@@@@')
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('get_url_data', id=id))
     flash('Страница успешно проверена', 'success')
