@@ -52,7 +52,7 @@ def get_url_data_view(id):
     conn.close()
     return website_data, checks_website_data
 
-
+'''
 def check_url_view(id):
     conn = connect_database()
     cur = conn.cursor(cursor_factory=NamedTupleCursor)
@@ -77,4 +77,31 @@ def check_url_view(id):
         conn.close()
         return Statuses.SUCCESS
     except Exception:
+        return Statuses.ERROR
+'''    
+
+def get_url_name(id):
+    conn = connect_database()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+        cur.execute(f"SELECT * FROM urls WHERE id = {id}")
+        result = cur.fetchone()
+    conn.close()
+    print(result.name)
+    return result.name
+
+
+def check_url_view(id, status_code, title, h1, description):
+    conn = connect_database()
+    cur = conn.cursor(cursor_factory=NamedTupleCursor)
+    try:
+        cur.execute("INSERT INTO url_checks (url_id, status_code, h1, "
+                    "title, description) "
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (id, status_code, h1, title, description))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return Statuses.SUCCESS
+    except Exception:
+        print('дошло')
         return Statuses.ERROR

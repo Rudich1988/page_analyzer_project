@@ -1,7 +1,9 @@
+import requests
 from bs4 import BeautifulSoup as bs
 
 
-def find_tags(response):
+def find_tags(url):
+    response = requests.get(url)
     soup = bs(response.text, 'html.parser')
     title = soup.title
     title = '' if not title else title.text
