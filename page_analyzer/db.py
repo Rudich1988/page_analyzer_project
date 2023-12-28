@@ -20,13 +20,12 @@ def insert_url(website_url):
         conn.commit()
     except Exception:
         status = Statuses.NOT_SUCCESS
-    finally:
-        conn = connect_database()
-        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
-            result = cur.fetchone()
-        conn.close()
-        return {'id': result.id, 'status': status}
+    conn = connect_database()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+        cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
+        result = cur.fetchone()
+    conn.close()
+    return {'id': result.id, 'status': status}
 
 
 def get_all_urls():
