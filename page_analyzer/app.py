@@ -1,14 +1,16 @@
 import os
 from http import HTTPStatus
 
+import requests
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
+
 from page_analyzer.db import (get_all_urls, get_url_data_view,
                               insert_url, get_url_name, check_url_view)
 from page_analyzer.url_utils import normalize_url, is_url_valid
 from page_analyzer.enums import Statuses
 from page_analyzer.find_tags import find_tags
-import requests
+
 
 app = Flask(__name__)
 

@@ -1,7 +1,8 @@
 import psycopg2
+from psycopg2.extras import NamedTupleCursor
+
 from page_analyzer import app
 from page_analyzer.enums import Statuses
-from psycopg2.extras import NamedTupleCursor
 
 
 def connect_database():
