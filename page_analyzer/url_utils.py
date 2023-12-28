@@ -2,7 +2,6 @@ from urllib.parse import urlparse
 
 import validators
 
-
 LINE_LENGTH = 255
 
 
