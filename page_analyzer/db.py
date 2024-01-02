@@ -11,20 +11,21 @@ def connect_database():
 
 
 def insert_url(website_url):
-    status = Statuses.SUCCESS
+    #status = Statuses.SUCCESS
     conn = connect_database()
     try:
         conn.cursor().execute("INSERT INTO urls (name) "
                               "VALUES (%s)", (website_url,))
         conn.commit()
     except Exception:
-        status = Statuses.NOT_SUCCESS
+        return None
+        #status = Statuses.NOT_SUCCESS
     conn = connect_database()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
         result = cur.fetchone()
     conn.close()
-    return {'id': result.id, 'status': status}
+    return {'id': result.id}#, 'status': status}
 
 
 def get_all_urls():
@@ -61,6 +62,15 @@ def get_url_name(id):
     return result.name
 
 
+def get_url_id(website_url):
+    conn = connect_database()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+        cur.execute(f"SELECT id FROM urls WHERE name = '{website_url}'")
+        result = cur.fetchone()
+    conn.close()
+    return result.id
+
+
 def insert_url_checks(id, status_code, title, h1, description):
     conn = connect_database()
     cur = conn.cursor(cursor_factory=NamedTupleCursor)
@@ -72,6 +82,6 @@ def insert_url_checks(id, status_code, title, h1, description):
         conn.commit()
         cur.close()
         conn.close()
-        return Statuses.SUCCESS
+        return id#Statuses.SUCCESS
     except Exception:
-        return Statuses.ERROR
+        return None#Statuses.ERROR

@@ -5,7 +5,7 @@ import requests
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from page_analyzer.db import (get_all_urls, get_url_checks,
+from page_analyzer.db import (get_all_urls, get_url_checks, get_url_id,
                               insert_url, get_url_name, insert_url_checks)
 from page_analyzer.url_utils import normalize_url, is_url_valid
 from page_analyzer.enums import Statuses
@@ -35,6 +35,7 @@ def add_website():
                       'status': Statuses.ERROR.value}
         else:
             result = insert_url(website_url)
+        '''
         match result['status']:
             case Statuses.ERROR:
                 flash('Некорректный URL', Statuses.ERROR.value)
@@ -47,6 +48,18 @@ def add_website():
             case Statuses.NOT_SUCCESS:
                 flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
                 return redirect(url_for('get_url_data', id=result['id']))
+        '''
+        if result:
+            if 'website_data' in result:
+                flash('Некорректный URL', Statuses.ERROR.value)
+                return (render_template('/index.html',
+                                        web_name=result['website_data']['url']),
+                        HTTPStatus.UNPROCESSABLE_ENTITY)
+            flash('Страница успешно добавлена', Statuses.SUCCESS.value)
+            return redirect(url_for('get_url_data', id=result['id']))
+        flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
+        id = get_url_id(website_url)
+        return redirect(url_for('get_url_data',id=id))# id=result['id']))
     else:
         result = get_all_urls()
         return render_template('/show_all_urls.html', urls=result)
@@ -72,8 +85,10 @@ def check_url(id):
         result = insert_url_checks(id, status_code, tags['title'],
                                    tags['h1'], tags['description'])
     except Exception:
-        result = Statuses.ERROR
-    if result == Statuses.ERROR:
+        #result = Statuses.ERROR
+        result = None#insert_url_checks(id, status_code, tags['title'],
+                      #             tags['h1'], tags['description'])
+    if not result:# == Statuses.ERROR:
         flash('Произошла ошибка при проверке', Statuses.ERROR.value)
         return redirect(url_for('get_url_data', id=id))
     flash('Страница успешно проверена', Statuses.SUCCESS.value)
