@@ -31,20 +31,20 @@ def add_website():
         website_data = request.form.to_dict()
         website_url = normalize_url(website_data['url'])
         if not is_url_valid(website_url):
-            result = {'website_data': website_data, 'status': 'error'}
+            result = {'website_data': website_data, 'status': Statuses.ERROR.value}
         else:
             result = insert_url(website_url)
         match result['status']:
             case Statuses.ERROR:
-                flash('Некорректный URL', 'error')
+                flash('Некорректный URL', Statuses.ERROR.value)
                 return (render_template('/index.html',
                                         web_name=result['website_data']['url']),
                         HTTPStatus.UNPROCESSABLE_ENTITY)
             case Statuses.SUCCESS:
-                flash('Страница успешно добавлена', 'success')
+                flash('Страница успешно добавлена', Statuses.SUCCESS.value)
                 return redirect(url_for('get_url_data', id=result['id']))
             case Statuses.NOT_SUCCESS:
-                flash('Страница уже существует', 'not success')
+                flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
                 return redirect(url_for('get_url_data', id=result['id']))
     else:
         result = get_all_urls()
@@ -65,7 +65,7 @@ def check_url(id):
         response = requests.get(url)
         status_code = response.status_code
         if status_code != 200:
-            flash('Произошла ошибка при проверке', 'error')
+            flash('Произошла ошибка при проверке', Statuses.ERROR.value)
             return redirect(url_for('get_url_data', id=id))
         tags = find_tags(url)
         result = check_url_view(id, status_code, tags['title'],
@@ -73,9 +73,9 @@ def check_url(id):
     except Exception:
         result = Statuses.ERROR
     if result == Statuses.ERROR:
-        flash('Произошла ошибка при проверке', 'error')
+        flash('Произошла ошибка при проверке', Statuses.ERROR.value)
         return redirect(url_for('get_url_data', id=id))
-    flash('Страница успешно проверена', 'success')
+    flash('Страница успешно проверена', Statuses.SUCCESS.value)
     return redirect(url_for('get_url_data', id=id))
 
 
