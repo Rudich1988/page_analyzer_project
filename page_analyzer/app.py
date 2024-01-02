@@ -64,7 +64,7 @@ def check_url(id):
     try:
         response = requests.get(url)
         status_code = response.status_code
-        if status_code != 200:
+        if status_code != HTTPStatus.OK:
             flash('Произошла ошибка при проверке', Statuses.ERROR.value)
             return redirect(url_for('get_url_data', id=id))
         tags = find_tags(url)
