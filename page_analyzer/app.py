@@ -31,7 +31,8 @@ def add_website():
         website_data = request.form.to_dict()
         website_url = normalize_url(website_data['url'])
         if not is_url_valid(website_url):
-            result = {'website_data': website_data, 'status': Statuses.ERROR.value}
+            result = {'website_data': website_data,
+                      'status': Statuses.ERROR.value}
         else:
             result = insert_url(website_url)
         match result['status']:
@@ -69,7 +70,7 @@ def check_url(id):
             return redirect(url_for('get_url_data', id=id))
         tags = find_tags(url)
         result = insert_url_checks(id, status_code, tags['title'],
-                                tags['h1'], tags['description'])
+                                   tags['h1'], tags['description'])
     except Exception:
         result = Statuses.ERROR
     if result == Statuses.ERROR:
