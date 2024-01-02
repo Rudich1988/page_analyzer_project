@@ -40,7 +40,7 @@ def get_all_urls():
     return result
 
 
-def get_url_data_view(id):
+def get_url_checks(id):
     conn = connect_database()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute(f"SELECT * FROM urls WHERE id = {id};")
@@ -61,7 +61,7 @@ def get_url_name(id):
     return result.name
 
 
-def check_url_view(id, status_code, title, h1, description):
+def insert_url_checks(id, status_code, title, h1, description):
     conn = connect_database()
     cur = conn.cursor(cursor_factory=NamedTupleCursor)
     try:
