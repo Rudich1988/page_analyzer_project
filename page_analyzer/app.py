@@ -41,43 +41,16 @@ def add_website():
         return (render_template('/index.html',
                                 web_name=result['website_data']['url']),
                 HTTPStatus.UNPROCESSABLE_ENTITY)
-        '''
-        else:
-            result = insert_url(website_url)
-        if result:
-            if 'website_data' in result:
-                flash('Некорректный URL', Statuses.ERROR.value)
-                return (render_template('/index.html',
-                                        web_name=result['website_data']['url']),
-                        HTTPStatus.UNPROCESSABLE_ENTITY)
-            flash('Страница успешно добавлена', Statuses.SUCCESS.value)
-            return redirect(url_for('get_url_data', id=result['id']))
-        flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
-        id = get_url_id(website_url)
-        return redirect(url_for('get_url_data', 
-                                id=id))
-    else:
-        result = get_all_urls()
-        return render_template('/show_all_urls.html', urls=result)
-    '''
     try:
         result = insert_url(website_url)
-        print(result)
     except Exception:
         flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
         id = get_url_id(website_url)
-        return redirect(url_for('get_url_data', 
+        return redirect(url_for('get_url_data',
                         id=id))
-        #else:
-        #result = insert_url(website_url)
     flash('Страница успешно добавлена', Statuses.SUCCESS.value)
-    return redirect(url_for('get_url_data', 
+    return redirect(url_for('get_url_data',
                     id=result['id']))
-    #else:
-     #   result = get_all_urls()
-      #  return render_template('/show_all_urls.html', urls=result)
-
-
 
 
 @app.route('/urls/<int:id>')
@@ -90,24 +63,6 @@ def get_url_data(id):
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def check_url(id):
     url = get_url_name(id)
-    '''
-    try:
-        response = requests.get(url)
-        status_code = response.status_code
-        if status_code != HTTPStatus.OK:
-            flash('Произошла ошибка при проверке', Statuses.ERROR.value)
-            return redirect(url_for('get_url_data', id=id))
-        tags = find_tags(url)
-        result = insert_url_checks(id, status_code, tags['title'],
-                                   tags['h1'], tags['description'])
-    except Exception:
-        result = None
-    if not result:
-        flash('Произошла ошибка при проверке', Statuses.ERROR.value)
-        return redirect(url_for('get_url_data', id=id))
-    flash('Страница успешно проверена', Statuses.SUCCESS.value)
-    return redirect(url_for('get_url_data', id=id))
-    '''
     try:
         response = requests.get(url)
         status_code = response.status_code
@@ -118,7 +73,6 @@ def check_url(id):
     except Exception:
         flash('Произошла ошибка при проверке', Statuses.ERROR.value)
     return redirect(url_for('get_url_data', id=id))
-
 
 
 if __name__ == '__main__':
