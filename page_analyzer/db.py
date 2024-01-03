@@ -2,7 +2,6 @@ import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
 from page_analyzer import app
-from page_analyzer.enums import Statuses
 
 
 def connect_database():
@@ -11,21 +10,23 @@ def connect_database():
 
 
 def insert_url(website_url):
-    #status = Statuses.SUCCESS
     conn = connect_database()
     try:
-        conn.cursor().execute("INSERT INTO urls (name) "
-                              "VALUES (%s)", (website_url,))
+        cur = conn.cursor()
+        cur.execute("INSERT INTO urls (name) "
+                              "VALUES (%s) RETURNING id", (website_url,))
+        id = cur.fetchone()[0]
         conn.commit()
+    #except Exception:
+     #   return BaseException#None
     except Exception:
-        return None
-        #status = Statuses.NOT_SUCCESS
-    conn = connect_database()
-    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-        cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
-        result = cur.fetchone()
+        raise ValueError('страница существует')
+    #conn = connect_database()
+    #with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+     #   cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
+      #  result = cur.fetchone()
     conn.close()
-    return {'id': result.id}#, 'status': status}
+    return {'id': id}
 
 
 def get_all_urls():
@@ -82,6 +83,6 @@ def insert_url_checks(id, status_code, title, h1, description):
         conn.commit()
         cur.close()
         conn.close()
-        return id#Statuses.SUCCESS
+        return id
     except Exception:
-        return None#Statuses.ERROR
+        raise ValueError('невозможно сделать проверку сайта с таким кодом ответа')
