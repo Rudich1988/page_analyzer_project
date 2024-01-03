@@ -27,4 +27,4 @@ def find_tags(url):
         return {'title': title, 'h1': h1,
                 'description': description}
     except Exception:
-        raise ValueError('такого сайта не существует')
+        raise ValueError()

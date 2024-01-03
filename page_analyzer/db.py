@@ -20,7 +20,7 @@ def insert_url(website_url):
     #except Exception:
      #   return BaseException#None
     except Exception:
-        raise ValueError('страница существует')
+        raise ValueError()
     #conn = connect_database()
     #with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
      #   cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
@@ -85,4 +85,4 @@ def insert_url_checks(id, status_code, title, h1, description):
         conn.close()
         return id
     except Exception:
-        raise ValueError('невозможно сделать проверку сайта с таким кодом ответа')
+        raise ValueError()
