@@ -62,6 +62,7 @@ def add_website():
     '''
     try:
         result = insert_url(website_url)
+        print(result)
     except Exception:
         flash('Страница уже существует', Statuses.NOT_SUCCESS.value)
         id = get_url_id(website_url)

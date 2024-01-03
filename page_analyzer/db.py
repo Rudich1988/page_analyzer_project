@@ -16,7 +16,7 @@ def insert_url(website_url):
         with conn.cursor() as cur:#cur.execute("INSERT INTO urls (name) "
             cur.execute("INSERT INTO urls (name) "
                         "VALUES (%s) RETURNING id;", (website_url,))                     #"VALUES (%s) RETURNING id;", (website_url,))
-        id = cur.fetchone()[0]
+            id = cur.fetchone()[0]
         conn.commit()
         conn.close()
         return {'id': id}
@@ -24,7 +24,8 @@ def insert_url(website_url):
      #   return BaseException#None
     except Exception:
         conn.close()
-        raise ValueError()
+        print('lol')
+        raise ValueError
     #conn = connect_database()
     #with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
      #   cur.execute(f"SELECT * FROM urls WHERE name='{website_url}'")
@@ -88,4 +89,4 @@ def insert_url_checks(id, status_code, title, h1, description):
         conn.close()
         return id
     except Exception:
-        raise ValueError()
+        raise ValueError
