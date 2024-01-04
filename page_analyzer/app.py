@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
 from page_analyzer.db import (get_all_urls, get_url_checks, get_url_id,
-                              insert_url, get_url_name, insert_url_checks)
+                              insert_url, get_url_name, insert_url_checks,
+                              get_website_data)
 from page_analyzer.url_utils import normalize_url, is_url_valid
 from page_analyzer.enums import Statuses
 from page_analyzer.find_tags import find_tags
@@ -55,9 +56,18 @@ def add_website():
 
 @app.route('/urls/<int:id>')
 def get_url_data(id):
+    '''
     website_data, check_data = get_url_checks(id)
     return render_template('/get_url_data.html',
                            check_data=check_data, website_data=website_data)
+    '''
+    try:
+        website_data = get_website_data(id)
+        check_data = get_url_checks(id)
+        return render_template('/get_url_data.html',
+                               check_data=check_data, website_data=website_data)
+    except Exception:
+        return render_template('/error.html')
 
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
