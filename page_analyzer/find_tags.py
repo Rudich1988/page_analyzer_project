@@ -1,10 +1,15 @@
+from http import HTTPStatus
+
 import requests
 from bs4 import BeautifulSoup as bs
 
 
 def find_tags(url):
-    try:
-        response = requests.get(url)
+    response = requests.get(url)
+    status_code = response.status_code
+    if status_code != HTTPStatus.OK:
+        raise ValueError
+    else:
         soup = bs(response.text, 'html.parser')
         title = soup.title
         title = '' if not title else title.text
@@ -14,5 +19,3 @@ def find_tags(url):
         description = '' if not description else description['content']
         return {'title': title, 'h1': h1,
                 'description': description}
-    except Exception:
-        raise ValueError
