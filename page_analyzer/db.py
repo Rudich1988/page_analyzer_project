@@ -49,21 +49,16 @@ def get_website_data(id):
     except Exception:
         conn.close()
         raise ValueError
-    #return website_data
-        
 
 
 def get_url_checks(id):
     conn = connect_database()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-        #cur.execute(f"SELECT * FROM urls WHERE id = {id};")
-        #website_data = cur.fetchone()
         cur.execute(f"SELECT * FROM url_checks "
                     f"WHERE url_id = {id} ORDER BY id DESC;")
         checks_website_data = cur.fetchall()
     conn.close()
     return checks_website_data
-    #return website_data, checks_website_data
 
 
 def get_url_name(id):

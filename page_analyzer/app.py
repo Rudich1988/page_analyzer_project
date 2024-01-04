@@ -56,11 +56,6 @@ def add_website():
 
 @app.route('/urls/<int:id>')
 def get_url_data(id):
-    '''
-    website_data, check_data = get_url_checks(id)
-    return render_template('/get_url_data.html',
-                           check_data=check_data, website_data=website_data)
-    '''
     try:
         website_data = get_website_data(id)
         check_data = get_url_checks(id)
